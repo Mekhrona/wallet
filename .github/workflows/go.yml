@@ -2,9 +2,9 @@ name: Go
 
 on:
   push:
-    branches: [ master, main, v1]
+    branches: [ master, main ]
   pull_request:
-    branches: [ master, main, v1 ]
+    branches: [ master, main ]
 
 jobs:
 
@@ -18,9 +18,6 @@ jobs:
         with:
           go-version: 1.16
         id: go
-
-      - name: Set up GOPRIVATE
-        run: go env -w GOPRIVATE=github.com/Mekhrona
 
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
