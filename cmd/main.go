@@ -27,14 +27,14 @@ func main() {
 	if err!=nil{
 		fmt.Println(err)
 	}
-	fmt.Println(accountEx.ID)
+	fmt.Println(&accountEx.ID)
 
-	accountNot,errNot:=svc.FindAccountByID(5)
+	accountNot,errNot:=svc.FindAccountByID(account2.ID)
 
 	if errNot!=nil{
-		fmt.Println(err)
+		fmt.Println(errNot)
 	}
 	
-	fmt.Println(accountNot.ID)
+	fmt.Println(&accountNot.ID)
 
 }

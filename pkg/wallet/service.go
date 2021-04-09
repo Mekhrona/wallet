@@ -3,7 +3,9 @@ package wallet
 import (
 	"errors"
 
-	"github.com/Mekhrona/wallet/pkg/types")
+	"github.com/Mekhrona/wallet/pkg/types"
+	"github.com/google/uuid"
+)
 
 
 var ErrPhoneRegistered=errors.New("phone already registered")
@@ -24,7 +26,7 @@ func (s *Service) RegisterAccount(phone types.Phone) (*types.Account, error) {
 	  }	
 	}
 
-	s.nextAccountID++
+	s.nextAccountID=int64(uuid.New().ID())
 	account:= &types.Account{
 		ID:  s.nextAccountID,
 		Phone:  phone,
