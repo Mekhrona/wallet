@@ -151,3 +151,24 @@ func (s *Service) FindPaymentByID(paymentID string) (*types.Payment, error) {
 	}
 	return payment,nil
 }
+
+
+//Repeat fuctions allows to repeat already made payment 
+func (s *Service)  Repeat(paymentID string) (*types.Payment, error){
+  targetPayment,err:=s.FindPaymentByID(paymentID)
+  if err != nil {
+	  return nil, err
+  }
+
+  newPaymentID:=uuid.New().String()
+  newPayment:=&types.Payment{
+	  ID: newPaymentID,
+	  AccountID: targetPayment.AccountID,
+	  Amount: targetPayment.Amount,
+	  Category: targetPayment.Category,
+	  Status: types.PaymentStatusInProgress,
+  }
+
+  s.payments=append(s.payments, newPayment)
+  return newPayment,nil
+}
