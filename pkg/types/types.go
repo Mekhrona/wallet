@@ -4,24 +4,25 @@ package types
 type Money int64
 
 // Currency представляет собой категорию, в которой был совершён платёж
-type Category string
+type PaymentCategory string
 
 // Status представляет собой статус платежа.
-type Status string
+type PaymentStatus string
 
 //Предопределённые статусы платежей.
 const (
-	StatusOk Status = "OK"
-	StatusFail Status = "FAIL"
-	StatusInProgress Status = "INPROGRESS"
+	PaymentStatusOk PaymentStatus = "OK"
+	PaymentStatusFail PaymentStatus = "FAIL"
+	PaymentStatusInProgress PaymentStatus = "INPROGRESS"
 )
 
 //Payment представляет информацию о платеже.
 type Payment struct{
-	ID int
+	ID string
+	AccountID int64
 	Amount Money
-	Category Category
-	Status Status
+	Category PaymentCategory
+	Status PaymentStatus
 }
 
 type Phone string
