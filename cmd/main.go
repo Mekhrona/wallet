@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/Mekhrona/wallet/pkg/types"
 	"github.com/Mekhrona/wallet/pkg/wallet"
+
 )
 
 
