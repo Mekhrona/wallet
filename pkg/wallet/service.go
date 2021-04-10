@@ -160,6 +160,24 @@ func (s *Service)  Repeat(paymentID string) (*types.Payment, error){
 	  return nil, err
   }
 
+  var account *types.Account
+  for _, acc := range s.accounts {
+	  if acc.ID==targetPayment.AccountID{
+		  account=acc
+		  break
+	  }				  
+  }
+  
+  if account==nil {
+	  return nil, ErrAccountNotFound
+  }
+
+  if account.Balance<targetPayment.Amount{
+	  return nil, ErrNotENoughBalance
+  }
+
+  account.Balance-=targetPayment.Amount
+
   newPaymentID:=uuid.New().String()
   newPayment:=&types.Payment{
 	  ID: newPaymentID,
