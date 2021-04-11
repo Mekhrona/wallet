@@ -12,6 +12,7 @@ var ErrAmountMustBePositive=errors.New("amount must be greater than zero")
 var ErrAccountNotFound=errors.New("account not found")
 var ErrNotENoughBalance=errors.New("balance is not enough")
 var ErrPaymentNotFound=errors.New("payment not found")
+var ErrFavoriteNotFound=errors.New("favorite payment not found")
 
 type Service struct {
 	nextAccountID int64
@@ -196,7 +197,7 @@ func (s *Service)  Repeat(paymentID string) (*types.Payment, error){
 func (s *Service) FavoritePayment(paymentID string, name string) (*types.Favorite, error){
   targetPayment,err:=s.FindPaymentByID(paymentID)
   if err != nil {
-	  return nil, err
+	  return nil, ErrFavoriteNotFound
   }
   favPayment:=&types.Favorite{
 	  ID: targetPayment.ID,
@@ -221,7 +222,7 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 		}
 
 		if favorite==nil{
-			return nil,ErrPaymentNotFound
+			return nil,ErrFavoriteNotFound
 		}
 
 		payment,err:=s.Pay(favorite.AccountID, favorite.Amount, favorite.Category)
