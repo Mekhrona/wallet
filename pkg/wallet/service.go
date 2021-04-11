@@ -200,7 +200,7 @@ func (s *Service) FavoritePayment(paymentID string, name string) (*types.Favorit
 	  return nil, ErrFavoriteNotFound
   }
   favPayment:=&types.Favorite{
-	  ID: targetPayment.ID,
+	  ID: paymentID,
 	  AccountID: targetPayment.AccountID,
 	  Name: name,
 	  Amount: targetPayment.Amount,
