@@ -223,3 +223,52 @@ func TestRepeat_success(t *testing.T) {
 }
 }
 
+
+func TestFavoritePayment_success(t *testing.T) {
+	s:=newTestService()
+	_, payments, err:= s.addAccount(defaultTestAccount)
+	if err != nil {
+		t.Error(err)
+		return 
+	}
+	payment:=payments[0]
+    favPayment, err :=s.FavoritePayment(payment.ID, "mobile")
+	
+	if err != nil {
+		t.Error(err)
+		return 
+	}
+   if favPayment.AccountID!=payment.AccountID{
+	   t.Errorf("Favorite acccount ID, %v, is not matched with expected,%v",favPayment.AccountID,payment.AccountID )
+   }
+
+	
+}
+
+func TestPayFromFavorite_success(t *testing.T) {
+	s:=newTestService()
+	_, payments, err:= s.addAccount(defaultTestAccount)
+	if err != nil {
+		t.Error(err)
+		return 
+	}
+	payment:=payments[0]
+    favPayment, err :=s.FavoritePayment(payment.ID, "mobile")
+	
+	if err != nil {
+		t.Error(err)
+		return 
+	}
+
+	resultPayment,err:=s.PayFromFavorite(favPayment.ID)
+	if err != nil {
+		t.Error(err)
+		return 
+	}
+
+	if resultPayment.AccountID!=payment.AccountID{
+		t.Errorf("Favorite payment ID,%v, and resulting payment ID do not match,%v", resultPayment.ID,payment.ID)
+	}
+	
+}
+

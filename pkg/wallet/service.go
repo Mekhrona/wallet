@@ -17,6 +17,7 @@ type Service struct {
 	nextAccountID int64
 	accounts      []*types.Account
 	payments      []*types.Payment
+	favorites     []*types.Favorite
 }
  
 func (s *Service) RegisterAccount(phone types.Phone) (*types.Account, error) {
@@ -189,4 +190,41 @@ func (s *Service)  Repeat(paymentID string) (*types.Payment, error){
 
   s.payments=append(s.payments, newPayment)
   return newPayment,nil
+}
+
+
+func (s *Service) FavoritePayment(paymentID string, name string) (*types.Favorite, error){
+  targetPayment,err:=s.FindPaymentByID(paymentID)
+  if err != nil {
+	  return nil, err
+  }
+  favPayment:=&types.Favorite{
+	  ID: targetPayment.ID,
+	  AccountID: targetPayment.AccountID,
+	  Name: name,
+	  Amount: targetPayment.Amount,
+	  Category: targetPayment.Category,
+
+  }
+ s.favorites=append(s.favorites, favPayment)
+  return favPayment, nil
+}
+
+
+func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
+	var favorite *types.Favorite
+	for _, fav := range s.favorites {
+		if fav.ID==favoriteID{
+			favorite=fav
+			break
+		}
+		}
+
+		if favorite==nil{
+			return nil,ErrPaymentNotFound
+		}
+
+		payment,err:=s.Pay(favorite.AccountID, favorite.Amount, favorite.Category)
+
+		return payment,err
 }
