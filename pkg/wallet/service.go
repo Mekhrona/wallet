@@ -199,8 +199,9 @@ func (s *Service) FavoritePayment(paymentID string, name string) (*types.Favorit
   if err != nil {
 	  return nil, ErrPaymentNotFound
   }
+  newPaymentID:=uuid.New().String()
   favPayment:=&types.Favorite{
-	  ID: paymentID,
+	  ID: newPaymentID,
 	  AccountID: targetPayment.AccountID,
 	  Name: name,
 	  Amount: targetPayment.Amount,
