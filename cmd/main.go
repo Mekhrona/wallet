@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"strconv"
+
 	"github.com/Mekhrona/wallet/pkg/types"
 	"github.com/Mekhrona/wallet/pkg/wallet"
-
 )
 
 
@@ -36,5 +39,54 @@ func main() {
 	}
 	
 	fmt.Println(&accountNot.ID)
+
+
+	file, err:=os.Create("data/accounts.txt")
+	if err!=nil{
+		log.Print(err)
+		return
+	}
+	defer func(){
+		err:=file.Close()
+		if err != nil {
+			log.Print(err)
+		}
+	}()
+
+	for _, account := range accounts {
+
+		_, err=file.Write([]byte (strconv.FormatInt(int64(account.ID),10)))
+		if err!=nil{
+			log.Print(err)
+		}
+
+		_, err=file.Write([]byte (";"))
+		if err!=nil{
+			log.Print(err)
+		}
+
+		_, err=file.Write([]byte (account.Phone))
+		if err!=nil{
+			log.Print(err)
+		}
+
+		_, err=file.Write([]byte (";"))
+		if err!=nil{
+			log.Print(err)
+		}
+
+		_, err=file.Write([]byte (strconv.FormatInt(int64(account.Balance),10)))
+		if err!=nil{
+			log.Print(err)
+		}
+
+
+		_, err=file.Write([]byte ("|"))
+		if err!=nil{
+			log.Print(err)
+		}
+	}
+
+	
 
 }

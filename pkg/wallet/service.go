@@ -2,6 +2,10 @@ package wallet
 
 import (
 	"errors"
+	"log"
+	"os"
+	"strconv"
+
 	"github.com/Mekhrona/wallet/pkg/types"
 	"github.com/google/uuid"
 )
@@ -229,4 +233,55 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 		payment,err:=s.Pay(favorite.AccountID, favorite.Amount, favorite.Category)
 
 		return payment,err
+}
+
+func (s *Service) ExportToFile(accounts *[]types.Account)  *os.File {
+
+	file, err:=os.Create("data/accounts.txt")
+	if err!=nil{
+		log.Print(err)
+		return nil
+	}
+	defer func(){
+		err:=file.Close()
+		if err != nil {
+			log.Print(err)
+		}
+	}()
+
+	for _, account := range *accounts {
+
+		_, err=file.Write([]byte (strconv.FormatInt(int64(account.ID),10)))
+		if err!=nil{
+			log.Print(err)
+		}
+
+		_, err=file.Write([]byte (";"))
+		if err!=nil{
+			log.Print(err)
+		}
+
+		_, err=file.Write([]byte (account.Phone))
+		if err!=nil{
+			log.Print(err)
+		}
+
+		_, err=file.Write([]byte (";"))
+		if err!=nil{
+			log.Print(err)
+		}
+
+		_, err=file.Write([]byte (strconv.FormatInt(int64(account.Balance),10)))
+		if err!=nil{
+			log.Print(err)
+		}
+
+
+		_, err=file.Write([]byte ("|"))
+		if err!=nil{
+			log.Print(err)
+		}
+	}
+
+  return file
 }
