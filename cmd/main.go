@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/Mekhrona/wallet/pkg/types"
 	"github.com/Mekhrona/wallet/pkg/wallet"
@@ -47,29 +46,9 @@ func main() {
 	}()
 	
 
-	for _, account := range accounts {
+errFile:=svc.ExportToFile("data/accounts.txt")
 
-		_, err=file.Write([]byte (strconv.FormatInt(int64(account.ID),10)))
-		if err!=nil{
-			return 
-		}
-
-		_, err=file.Write([]byte (";"))
-		if err!=nil{
-			return 
-		}
-
-		_, err=file.Write([]byte (account.Phone))
-		if err!=nil{
-			return 
-		}
-
-
-		_, err=file.Write([]byte ("|"))
-		if err!=nil{
-			return 
-		}
-	}
+fmt.Print(errFile)
 
 
 		

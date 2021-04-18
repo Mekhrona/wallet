@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"errors"
-	"io"
 	"log"
 	"os"
 	"strconv"
@@ -242,97 +241,78 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 //Homework16
 func (s *Service) ExportToFile(path string) error {
 	file, err := os.Create(path)
-
 	if err != nil {
 		log.Print(err)
-
 		return err
 	}
-
 	defer func() {
-		if err := file.Close(); err != nil {
-			log.Print(err)
+		if cerr := file.Close(); cerr != nil {
+			log.Print(cerr)
 		}
 	}()
 
 	for _, account := range s.accounts {
-		ID := strconv.FormatInt(int64(account.ID), 10) + ";"
-		phone := string(account.Phone) + ";"
-		balance := strconv.FormatInt(int64(account.Balance), 10)
-
-		_, err = file.Write([]byte(ID + phone + balance + "|"))
-
+		text := strconv.FormatInt(int64(account.ID), 10) + ";" + string(account.Phone) + ";" + strconv.FormatInt(int64(account.Balance), 10) + "|"
+		_, err = file.Write([]byte(text))
 		if err != nil {
 			log.Print(err)
-
 			return err
 		}
 	}
-
-	return nil
+	return err
 }
 
 func (s *Service) ImportFromFile(path string) error {
 	file, err := os.Open(path)
-
 	if err != nil {
 		log.Print(err)
-
 		return err
 	}
 
 	defer func() {
-		if err := file.Close(); err != nil {
+		err := file.Close()
+		if err != nil {
 			log.Print(err)
 		}
 	}()
 
-	result := make([]byte, 0)
-	bufferf := make([]byte, 4)
+	buf := make([]byte, 4096)
 
-	for {
-		read, err := file.Read(bufferf)
-
-		if err == io.EOF {
-			break
-		}
-
-		if err != nil {
-			log.Print(err)
-
-			return err
-		}
-
-		result = append(result, bufferf[:read]...)
+	read, err := file.Read(buf)
+	if err != nil {
+		log.Print(err)
+		return err
 	}
 
-	data := string(result)
+	data := string(buf[:read])
+	split := strings.Split(data, "|")
 
-	for _, line := range strings.Split(data, "|") {
-		if len(line) == 0 {
-			return err
+	for _, val := range split {
+		arrSplit := strings.Split(val, ";")
+		if arrSplit[0] == "" {
+			break
 		}
-
-		item := strings.Split(line, ";")
-		ID, err := strconv.ParseInt(item[0], 10, 64)
-
+		newID, err := strconv.Atoi(arrSplit[0])
 		if err != nil {
 			return err
 		}
 
-		balance, err := strconv.ParseInt(item[2], 10, 64)
-
+		if arrSplit[2] == "" {
+			break
+		}
+		newBalance, err := strconv.Atoi(arrSplit[2])
 		if err != nil {
 			return err
 		}
-
-		s.accounts = append(s.accounts, &types.Account{
-			ID:      ID,
-			Phone:   types.Phone(item[1]),
-			Balance: types.Money(balance),
-		})
+		acc := &types.Account{
+			ID:      int64(newID),
+			Phone:   types.Phone(arrSplit[1]),
+			Balance: types.Money(newBalance),
+		}
+		s.accounts = append(s.accounts, acc)
 	}
 
 	return nil
 }
+
 
