@@ -235,12 +235,11 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 		return payment,err
 }
 
-func (s *Service) ExportToFile(fileName string)  *os.File {
+func (s *Service) ExportToFile(path string)  error {
 
-	file, err:=os.Create(fileName)
+	file, err:=os.Create(path)
 	if err!=nil{
-		log.Print(err)
-		return nil
+		return err
 	}
 	defer func(){
 		err:=file.Close()
@@ -255,35 +254,36 @@ func (s *Service) ExportToFile(fileName string)  *os.File {
 
 		_, err=file.Write([]byte (strconv.FormatInt(int64(account.ID),10)))
 		if err!=nil{
-			log.Print(err)
+			return err
 		}
 
 		_, err=file.Write([]byte (";"))
 		if err!=nil{
-			log.Print(err)
+			return err
 		}
 
 		_, err=file.Write([]byte (account.Phone))
 		if err!=nil{
-			log.Print(err)
+			return err
 		}
 
 		_, err=file.Write([]byte (";"))
 		if err!=nil{
-			log.Print(err)
+			return err
 		}
 
 		_, err=file.Write([]byte (strconv.FormatInt(int64(account.Balance),10)))
 		if err!=nil{
-			log.Print(err)
+			return err
 		}
 
 
 		_, err=file.Write([]byte ("|"))
 		if err!=nil{
-			log.Print(err)
+			return err
 		}
 	}
 
-  return file
+	
+  return nil
 }
