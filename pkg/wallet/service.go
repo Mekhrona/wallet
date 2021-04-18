@@ -2,10 +2,9 @@ package wallet
 
 import (
 	"errors"
-	"log"
 	"os"
+	"log"
 	"strconv"
-
 	"github.com/Mekhrona/wallet/pkg/types"
 	"github.com/google/uuid"
 )
@@ -254,6 +253,7 @@ func (s *Service) ExportToFile(path string)  error {
 		}
 	}()
 	
+	
 	accounts:=s.accounts
 
 	for _, account := range accounts {
@@ -290,15 +290,8 @@ func (s *Service) ExportToFile(path string)  error {
 		}
 	}
 	
-	file, error:=os.Open(path)
-	if err!=nil{
-		return err
-	}
-	defer func(){
-		err:=file.Close()
-		if err != nil {
-			log.Print(err)
-		}
-	}()
-  return error
+	
+	_, erro:=os.Open(path)
+	
+  return erro
 }
