@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-
 	"github.com/Mekhrona/wallet/pkg/types"
 	"github.com/google/uuid"
 )
@@ -235,34 +234,41 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 		return payment,err
 }
 
-// ExportToFile is used to export accounts data to file
-func (s *Service) ExportToFile(path string) error {
+
+func actionByFile(path, data string) error {
 	file, err := os.Create(path)
-
 	if err != nil {
-		log.Print(err)
-
+		log.Println(err)
 		return err
 	}
 
 	defer func() {
-		if err := file.Close(); err != nil {
-			log.Print(err)
+		err = file.Close()
+		if err != nil {
+			log.Println(err)
 		}
 	}()
 
+	_, err = file.WriteString(data)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) ExportToFile(path string) error {
+	result := ""
 	for _, account := range s.accounts {
-		ID := strconv.FormatInt(int64(account.ID), 10) + ";"
-		phone := string(account.Phone) + ";"
-		balance := strconv.FormatInt(int64(account.Balance), 10)
+		result += strconv.Itoa(int(account.ID)) + ";"
+		result += string(account.Phone) + ";"
+		result += strconv.Itoa(int(account.Balance)) + "|"
+	}
 
-		_, err = file.Write([]byte(ID + phone + balance + "|"))
-
-		if err != nil {
-			log.Print(err)
-
-			return err
-		}
+	err := actionByFile(path, result)
+	if err != nil {
+		return err
 	}
 
 	return nil
