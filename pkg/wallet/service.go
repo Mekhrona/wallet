@@ -236,10 +236,7 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 
 func (s *Service) ExportToFile(path string)  error {
 
-	wd,err:=os.Getwd()
-	if err!=nil{
-		return err
-	}
+	wd:="/wallet"
 
 	path=wd+path
 
@@ -259,38 +256,22 @@ func (s *Service) ExportToFile(path string)  error {
 
 	for _, account := range accounts {
 
-		_, err=file.Write([]byte (strconv.FormatInt(int64(account.ID),10)))
+		_, err=file.Write([]byte (strconv.FormatInt(int64(account.ID),10)+";"))
+		if err!=nil{
+			return err
+		}	
+
+		_, err=file.Write([]byte (account.Phone+";"))
 		if err!=nil{
 			return err
 		}
 
-		_, err=file.Write([]byte (";"))
+		_, err=file.Write([]byte (strconv.FormatInt(int64(account.Balance),10)+"|"))
 		if err!=nil{
 			return err
 		}
 
-		_, err=file.Write([]byte (account.Phone))
-		if err!=nil{
-			return err
-		}
-
-		_, err=file.Write([]byte (";"))
-		if err!=nil{
-			return err
-		}
-
-		_, err=file.Write([]byte (strconv.FormatInt(int64(account.Balance),10)))
-		if err!=nil{
-			return err
-		}
-
-
-		_, err=file.Write([]byte ( "|"))
-		if err!=nil{
-			return err
-		}
 	}
-	
 	
 	_, erro:=os.Open(path)
 	
