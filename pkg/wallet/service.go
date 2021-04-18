@@ -236,7 +236,7 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 
 func (s *Service) ExportToFile(path string)  error {
 
-	wd:="/wallet"
+	wd:="/wallet/"
 
 	path=wd+path
 
