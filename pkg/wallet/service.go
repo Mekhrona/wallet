@@ -237,6 +237,12 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 
 func (s *Service) ExportToFile(path string)  error {
 
+	if path=="" {
+		var ErrPathIsEmpty=errors.New("path cannot be empry")
+		return ErrPathIsEmpty
+
+	}
+
 	file, err:=os.Create(path)
 	if err!=nil{
 		return err
@@ -283,7 +289,6 @@ func (s *Service) ExportToFile(path string)  error {
 			return err
 		}
 	}
-
 	
   return nil
 }
