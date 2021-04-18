@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/Mekhrona/wallet/pkg/types"
 	"github.com/google/uuid"
