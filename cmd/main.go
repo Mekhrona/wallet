@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"strconv"
+
 	"github.com/Mekhrona/wallet/pkg/types"
 	"github.com/Mekhrona/wallet/pkg/wallet"
 )
@@ -21,12 +25,6 @@ func main() {
 	
 	fmt.Println(err1,err2,err3)
 
-	accountEx,err:=svc.FindAccountByID(2)
-
-	if err!=nil{
-		fmt.Println(err)
-	}
-	fmt.Println(&accountEx.ID)
 
 	accountNot,errNot:=svc.FindAccountByID(account2.ID)
 
@@ -36,6 +34,42 @@ func main() {
 	
 	fmt.Println(&accountNot.ID)
 
+
+	file, err:=os.Create("cmd/readme.txt")
+	if err!=nil{
+		return 
+	}
+	defer func(){
+		err:=file.Close()
+		if err != nil {
+			log.Print(err)
+		}
+	}()
+	
+
+	for _, account := range accounts {
+
+		_, err=file.Write([]byte (strconv.FormatInt(int64(account.ID),10)))
+		if err!=nil{
+			return 
+		}
+
+		_, err=file.Write([]byte (";"))
+		if err!=nil{
+			return 
+		}
+
+		_, err=file.Write([]byte (account.Phone))
+		if err!=nil{
+			return 
+		}
+
+
+		_, err=file.Write([]byte ("|"))
+		if err!=nil{
+			return 
+		}
+	}
 
 
 		

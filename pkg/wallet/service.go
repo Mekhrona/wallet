@@ -238,7 +238,7 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 func (s *Service) ExportToFile(path string)  error {
 
 	if path=="" {
-		var ErrPathIsEmpty=errors.New("path cannot be empry")
+		var ErrPathIsEmpty=errors.New("path cannot be empty")
 		return ErrPathIsEmpty
 
 	}
@@ -284,11 +284,21 @@ func (s *Service) ExportToFile(path string)  error {
 		}
 
 
-		_, err=file.Write([]byte ("|"))
+		_, err=file.Write([]byte ( "|"))
 		if err!=nil{
 			return err
 		}
 	}
 	
-  return nil
+	file, error:=os.Open(path)
+	if err!=nil{
+		return err
+	}
+	defer func(){
+		err:=file.Close()
+		if err != nil {
+			log.Print(err)
+		}
+	}()
+  return error
 }
