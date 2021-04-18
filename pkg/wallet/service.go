@@ -235,9 +235,9 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 		return payment,err
 }
 
-func (s *Service) ExportToFile(accounts *[]types.Account)  *os.File {
+func (s *Service) ExportToFile(fileName string)  *os.File {
 
-	file, err:=os.Create("data/accounts.txt")
+	file, err:=os.Create(fileName)
 	if err!=nil{
 		log.Print(err)
 		return nil
@@ -248,8 +248,10 @@ func (s *Service) ExportToFile(accounts *[]types.Account)  *os.File {
 			log.Print(err)
 		}
 	}()
+	
+	accounts:=s.accounts
 
-	for _, account := range *accounts {
+	for _, account := range accounts {
 
 		_, err=file.Write([]byte (strconv.FormatInt(int64(account.ID),10)))
 		if err!=nil{
