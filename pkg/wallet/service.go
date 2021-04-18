@@ -241,7 +241,7 @@ func (s *Service) ExportToFile(path string)  error {
 		return err
 	}
 
-	path+=wd
+	path=wd+path
 
 	file, err:=os.Create(path)
 	if err!=nil{
