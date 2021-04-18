@@ -2,9 +2,11 @@ package wallet
 
 import (
 	"errors"
-	"os"
 	"log"
+	"os"
 	"strconv"
+	"strings"
+
 	"github.com/Mekhrona/wallet/pkg/types"
 	"github.com/google/uuid"
 )
@@ -234,30 +236,37 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 		return payment,err
 }
 
+// ExportToFile is used to export accounts data to file
 func (s *Service) ExportToFile(path string) error {
 	file, err := os.Create(path)
+
 	if err != nil {
 		log.Print(err)
+
 		return err
 	}
+
 	defer func() {
-		if cerr := file.Close(); cerr != nil {
-			log.Print(cerr)
+		if err := file.Close(); err != nil {
+			log.Print(err)
 		}
 	}()
 
 	for _, account := range s.accounts {
-		text := strconv.FormatInt(int64(account.ID), 10) + ";" + string(account.Phone) + ";" + strconv.FormatInt(int64(account.Balance), 10) + "|"
-		if err != nil {
-			log.Print(err)
-			return err
-		}
-		_, err = file.Write([]byte(text))
+		ID := strconv.FormatInt(int64(account.ID), 10) + ";"
+		phone := string(account.Phone) + ";"
+		balance := strconv.FormatInt(int64(account.Balance), 10)
+
+		_, err = file.Write([]byte(ID + phone + balance + "|"))
 
 		if err != nil {
 			log.Print(err)
+
 			return err
 		}
 	}
-	return err
+
+	return nil
 }
+
+
