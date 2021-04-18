@@ -259,7 +259,7 @@ func (s *Service) ExportToFile(path string) error {
 			return err
 		}
 	}
-	return err
+	return nil
 }
 
 func (s *Service) ImportFromFile(path string) error {
