@@ -234,45 +234,30 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 		return payment,err
 }
 
-func (s *Service) ExportToFile(path string)  error {
-
-	wd:="/wallet/"
-
-	path=wd+path
-
-	file, err:=os.Create(path)
-	if err!=nil{
+func (s *Service) ExportToFile(path string) error {
+	file, err := os.Create(path)
+	if err != nil {
+		log.Print(err)
 		return err
 	}
-	defer func(){
-		err:=file.Close()
-		if err != nil {
-			log.Print(err)
+	defer func() {
+		if cerr := file.Close(); cerr != nil {
+			log.Print(cerr)
 		}
 	}()
-	
-	
-	accounts:=s.accounts
 
-	for _, account := range accounts {
-
-		_, err=file.Write([]byte (strconv.FormatInt(int64(account.ID),10)+";"))
-		if err!=nil{
-			return err
-		}	
-
-		_, err=file.Write([]byte (account.Phone+";"))
-		if err!=nil{
+	for _, account := range s.accounts {
+		text := strconv.FormatInt(int64(account.ID), 10) + ";" + string(account.Phone) + ";" + strconv.FormatInt(int64(account.Balance), 10) + "|"
+		if err != nil {
+			log.Print(err)
 			return err
 		}
+		_, err = file.Write([]byte(text))
 
-		_, err=file.Write([]byte (strconv.FormatInt(int64(account.Balance),10)+"|"))
-		if err!=nil{
+		if err != nil {
+			log.Print(err)
 			return err
 		}
-
 	}
-	
-	
-  return nil
+	return err
 }
