@@ -273,7 +273,6 @@ func (s *Service) ExportToFile(path string)  error {
 
 	}
 	
-	_, erro:=os.Open(path)
 	
-  return erro
+  return nil
 }
