@@ -2,9 +2,12 @@ package wallet
 
 import (
 	"errors"
+	"io"
 	"log"
 	"os"
 	"strconv"
+	"strings"
+
 	"github.com/Mekhrona/wallet/pkg/types"
 	"github.com/google/uuid"
 )
@@ -238,29 +241,98 @@ func (s *Service) PayFromFavorite(favoriteID string) (*types.Payment, error) {
 //ExportToFile экспортирует аккаунт в файл
 func (s *Service) ExportToFile(path string) error {
 	file, err := os.Create(path)
+
 	if err != nil {
-	  return err
-	}
-	defer func()  {
-	  if err := file.Close(); err != nil {
 		log.Print(err)
-	  }
+
+		return err
+	}
+
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Print(err)
+		}
 	}()
-	
-	var id int64
-	var phone string
-	var balance int64
+
 	for _, account := range s.accounts {
-	  id = account.ID
-	  phone = string(account.Phone)
-	  balance = int64(account.Balance)
-	  text:=strconv.FormatInt(int64(id),10)+(";")+(phone)+(";")+(strconv.FormatInt(int64(balance),10))+("|")
-	_, err = file.Write([]byte(text))
+		ID := strconv.FormatInt(int64(account.ID), 10) + ";"
+		phone := string(account.Phone) + ";"
+		balance := strconv.FormatInt(int64(account.Balance), 10)
+		text:=ID + phone + balance + "|"
+
+		_, err = file.Write([]byte(text))
+
+		if err != nil {
+			log.Print(err)
+
+			return err
+		}
+	}
+
+	return err
+}
+
+
+func (s *Service) ImportFromFile(path string) error {
+	file, err := os.Open(path)
+
 	if err != nil {
 		log.Print(err)
-	  return err
+
+		return err
 	}
-  }
-  
-	return err
-  }
+
+	defer func() {
+		if err := file.Close(); err != nil {
+			log.Print(err)
+		}
+	}()
+
+	result := make([]byte, 0)
+	bufferf := make([]byte, 4)
+
+	for {
+		read, err := file.Read(bufferf)
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			log.Print(err)
+
+			return err
+		}
+
+		result = append(result, bufferf[:read]...)
+	}
+
+	data := string(result)
+
+	for _, line := range strings.Split(data, "|") {
+		if len(line) == 0 {
+			return err
+		}
+
+		item := strings.Split(line, ";")
+		ID, err := strconv.ParseInt(item[0], 10, 64)
+
+		if err != nil {
+			return err
+		}
+
+		balance, err := strconv.ParseInt(item[2], 10, 64)
+
+		if err != nil {
+			return err
+		}
+
+		s.accounts = append(s.accounts, &types.Account{
+			ID:      ID,
+			Phone:   types.Phone(item[1]),
+			Balance: types.Money(balance),
+		})
+	}
+
+	return nil
+}
