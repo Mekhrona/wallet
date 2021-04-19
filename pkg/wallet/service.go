@@ -34,7 +34,7 @@ func (s *Service) RegisterAccount(phone types.Phone) (*types.Account, error) {
 	  }	
 	}
 
-	s.nextAccountID=int64(uuid.New().ID())
+	s.nextAccountID++
 	account:= &types.Account{
 		ID:  s.nextAccountID,
 		Phone:  phone,
@@ -244,7 +244,6 @@ func (s *Service) ExportToFile(path string) error {
 
 	if err != nil {
 		log.Print(err)
-
 		return err
 	}
 
@@ -264,12 +263,11 @@ func (s *Service) ExportToFile(path string) error {
 
 		if err != nil {
 			log.Print(err)
-
 			return err
 		}
 	}
 
-	return err
+	return nil
 }
 
 

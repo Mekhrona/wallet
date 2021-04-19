@@ -46,7 +46,7 @@ func main() {
 	}()
 	
 
-errFile:=svc.ExportToFile("data/accounts.txt")
+errFile:=svc.ExportToFile("data.txt")
 
 fmt.Print(errFile)
 
