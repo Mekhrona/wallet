@@ -314,14 +314,14 @@ func (s *Service) ImportFromFile(path string) error {
 			return err
 		}
 
-		item := strings.Split(line, ";")
-		ID, err := strconv.ParseInt(item[0], 10, 64)
+		accountData := strings.Split(line, ";")
+		ID, err := strconv.ParseInt(accountData[0], 10, 64)
 
 		if err != nil {
 			return err
 		}
 
-		balance, err := strconv.ParseInt(item[2], 10, 64)
+		balance, err := strconv.ParseInt(accountData[2], 10, 64)
 
 		if err != nil {
 			return err
@@ -329,7 +329,7 @@ func (s *Service) ImportFromFile(path string) error {
 
 		s.accounts = append(s.accounts, &types.Account{
 			ID:      ID,
-			Phone:   types.Phone(item[1]),
+			Phone:   types.Phone(accountData[1]),
 			Balance: types.Money(balance),
 		})
 	}
