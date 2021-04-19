@@ -246,6 +246,7 @@ func (s *Service) ExportToFile(path string) error {
 		log.Print(err)
 	  }
 	}()
+	
 	var id int64
 	var phone string
 	var balance int64
@@ -253,11 +254,13 @@ func (s *Service) ExportToFile(path string) error {
 	  id = account.ID
 	  phone = string(account.Phone)
 	  balance = int64(account.Balance)
-	_, err = file.Write([]byte(strconv.FormatInt(int64(id),10)+(";")+(phone)+(";")+(strconv.FormatInt(int64(balance),10))+("|")))
+	  text:=strconv.FormatInt(int64(id),10)+(";")+(phone)+(";")+(strconv.FormatInt(int64(balance),10))+("|")
+	_, err = file.Write([]byte(text))
 	if err != nil {
+		log.Print(err)
 	  return err
 	}
   }
   
-	return nil
+	return err
   }
